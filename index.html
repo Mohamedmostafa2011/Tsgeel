@@ -51,14 +51,14 @@
       const efoot = efootballInput.value;
 
       fetch("https://script.google.com/macros/s/AKfycbxbSJLQ3mLPR7ipUfEz1HeIWMX1sqkLBQXYBWg8_wDgaiKdRcVIWlJwj3rc_ifomicP/exec", {
-        method: "POST",
-        body: JSON.stringify({ name, phone, games, pubg, fc, efoot }),
-        headers: { "Content-Type": "application/json" },
+      method: "POST",
+      body: JSON.stringify({ name: "test", phone: "123", games: ["PUBG"], pubg: "12345", fc: "", efoot: "" }),
+      headers: { "Content-Type": "application/json" },
       })
       .then(res => res.text())
-      .then(data => result.innerText = "تم إرسال البيانات ✅")
-      .catch(err => result.innerText = "حصلت مشكلة 😢");
-    }
+      .then(data => console.log(data))
+      .catch(err => console.error("ERROR:", err));
+      }
   </script>
 </body>
 </html>
