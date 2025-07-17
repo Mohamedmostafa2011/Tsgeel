@@ -1,64 +1,244 @@
 <!DOCTYPE html>
-<html lang="en">
+<html dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <title>بطولة ميدو 🔥</title>
-  <style>
-    body { font-family: Arial; padding: 20px; background: #f0f0f0; }
-    input, select, button { margin-top: 10px; display: block; width: 100%; padding: 8px; }
-    .hidden { display: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل البطولات الإلكترونية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: fadeIn 1s;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Tajawal', sans-serif;
+            transition: border 0.3s;
+        }
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .game-option {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+        }
+        .game-option input[type="checkbox"] {
+            width: auto;
+            margin-left: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .required:after {
+            content: " *";
+            color: red;
+        }
+    </style>
 </head>
 <body>
-  <h2>سجّل في البطولة 💪</h2>
+    <div class="container animate__animated animate__fadeIn">
+        <h1>🎮 تسجيل المشاركة في البطولات</h1>
+        
+        <div class="input-group">
+            <label for="name" class="required">الاسم الكامل</label>
+            <input type="text" id="name" required placeholder="أدخل اسمك بالكامل">
+        </div>
+        
+        <div class="input-group">
+            <label for="phone" class="required">رقم الهاتف</label>
+            <input type="tel" id="phone" required placeholder="مثال: 0123456789">
+        </div>
+        
+        <div class="input-group">
+            <label class="required">اختر البطولات:</label>
+            <div class="game-option">
+                <input type="checkbox" id="pubg" name="games" value="PUBG">
+                <label for="pubg">PUBG</label>
+            </div>
+            <div id="pubg-field" class="input-group hidden">
+                <label for="pubg-id" class="required">ID (لـ PUBG)</label>
+                <input type="text" id="pubg-id" placeholder="أدخل ID الخاص بك في PUBG">
+            </div>
+            
+            <div class="game-option">
+                <input type="checkbox" id="fcmobile" name="games" value="FC Mobile">
+                <label for="fcmobile">FC Mobile</label>
+            </div>
+            <div id="fcmobile-field" class="input-group hidden">
+                <label for="fcmobile-uid" class="required">UID (لـ FC Mobile)</label>
+                <input type="text" id="fcmobile-uid" placeholder="أدخل UID الخاص بك في FC Mobile">
+            </div>
+            
+            <div class="game-option">
+                <input type="checkbox" id="efootball" name="games" value="eFootball">
+                <label for="efootball">eFootball</label>
+            </div>
+            <div id="efootball-field" class="input-group hidden">
+                <label for="efootball-name" class="required">اسم اللاعب (لـ eFootball)</label>
+                <input type="text" id="efootball-name" placeholder="أدخل اسمك في eFootball">
+            </div>
+        </div>
+        
+        <button id="submit-btn" class="animate__animated animate__pulse animate__infinite">✅ إرسال التسجيل</button>
+    </div>
 
-  <input type="text" id="name" placeholder="الاسم">
-  <input type="text" id="phone" placeholder="رقم التليفون">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <script>
+        // تهيئة Firebase (استبدل بالإعدادات الخاصة بك)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
 
-  <label>اختر البطولة أو البطولات:</label>
-  <label><input type="checkbox" value="PUBG" class="game"> PUBG</label>
-  <label><input type="checkbox" value="FC Mobile" class="game"> FC Mobile</label>
-  <label><input type="checkbox" value="eFootball" class="game"> eFootball</label>
+        // عرض/إخفاء الحقول حسب اختيار اللعبة
+        document.getElementById('pubg').addEventListener('change', function() {
+            document.getElementById('pubg-field').classList.toggle('hidden', !this.checked);
+        });
+        
+        document.getElementById('fcmobile').addEventListener('change', function() {
+            document.getElementById('fcmobile-field').classList.toggle('hidden', !this.checked);
+        });
+        
+        document.getElementById('efootball').addEventListener('change', function() {
+            document.getElementById('efootball-field').classList.toggle('hidden', !this.checked);
+        });
 
-  <input type="text" id="pubg_id" placeholder="ID لعبة PUBG" class="hidden">
-  <input type="text" id="fc_uid" placeholder="UID لعبة FC Mobile" class="hidden">
-  <input type="text" id="efootball_name" placeholder="اسم لعبة eFootball" class="hidden">
-
-  <button onclick="sendData()">إرسال ✅</button>
-
-  <p id="result"></p>
-
-  <script>
-    const pubgInput = document.getElementById('pubg_id');
-    const fcInput = document.getElementById('fc_uid');
-    const efootballInput = document.getElementById('efootball_name');
-    const result = document.getElementById('result');
-
-    document.querySelectorAll('.game').forEach(chk => {
-      chk.addEventListener('change', () => {
-        pubgInput.classList.toggle('hidden', !document.querySelector('input[value="PUBG"]').checked);
-        fcInput.classList.toggle('hidden', !document.querySelector('input[value="FC Mobile"]').checked);
-        efootballInput.classList.toggle('hidden', !document.querySelector('input[value="eFootball"]').checked);
-      });
-    });
-
-    function sendData() {
-      const name = document.getElementById('name').value;
-      const phone = document.getElementById('phone').value;
-      const games = [...document.querySelectorAll('.game:checked')].map(c => c.value);
-      const pubg = pubgInput.value;
-      const fc = fcInput.value;
-      const efoot = efootballInput.value;
-
-      fetch("https://script.google.com/macros/s/AKfycbxbSJLQ3mLPR7ipUfEz1HeIWMX1sqkLBQXYBWg8_wDgaiKdRcVIWlJwj3rc_ifomicP/exec", {
-      method: "POST",
-      body: JSON.stringify({ name: "test", phone: "123", games: ["PUBG"], pubg: "12345", fc: "", efoot: "" }),
-      headers: { "Content-Type": "application/json" },
-      })
-      .then(res => res.text())
-      .then(data => console.log(data))
-      .catch(err => console.error("ERROR:", err));
-      }
-  </script>
+        // إرسال البيانات
+        document.getElementById('submit-btn').addEventListener('click', function() {
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            
+            // جمع بيانات الألعاب المختارة
+            const gamesData = {};
+            let selectedGames = [];
+            
+            if (document.getElementById('pubg').checked) {
+                const pubgId = document.getElementById('pubg-id').value.trim();
+                if (!pubgId) {
+                    alert("الرجاء إدخال ID الخاص بـ PUBG");
+                    return;
+                }
+                gamesData.PUBG = { id: pubgId };
+                selectedGames.push("PUBG");
+            }
+            
+            if (document.getElementById('fcmobile').checked) {
+                const fcUid = document.getElementById('fcmobile-uid').value.trim();
+                if (!fcUid) {
+                    alert("الرجاء إدخال UID الخاص بـ FC Mobile");
+                    return;
+                }
+                gamesData.FC_Mobile = { uid: fcUid };
+                selectedGames.push("FC Mobile");
+            }
+            
+            if (document.getElementById('efootball').checked) {
+                const efootballName = document.getElementById('efootball-name').value.trim();
+                if (!efootballName) {
+                    alert("الرجاء إدخال اسم اللاعب في eFootball");
+                    return;
+                }
+                gamesData.eFootball = { playerName: efootballName };
+                selectedGames.push("eFootball");
+            }
+            
+            // التحقق من البيانات الأساسية
+            if (!name || !phone) {
+                alert("الرجاء إدخال الاسم ورقم الهاتف");
+                return;
+            }
+            
+            if (selectedGames.length === 0) {
+                alert("الرجاء اختيار بطولة واحدة على الأقل");
+                return;
+            }
+            
+            // إرسال البيانات إلى Firebase
+            const db = firebase.database();
+            db.ref('registrations').push({
+                name: name,
+                phone: phone,
+                games: selectedGames,
+                gamesData: gamesData,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            })
+            .then(() => {
+                alert("تم التسجيل بنجاح! شكراً لمشاركتك.");
+                document.querySelectorAll('input').forEach(input => input.value = '');
+                document.querySelectorAll('.hidden').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.");
+            });
+        });
+    </script>
 </body>
 </html>
