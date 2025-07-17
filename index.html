@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>بطولة ميدو 🔥</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+    input, select, button { margin-top: 10px; display: block; width: 100%; padding: 8px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h2>سجّل في البطولة 💪</h2>
+
+  <input type="text" id="name" placeholder="الاسم">
+  <input type="text" id="phone" placeholder="رقم التليفون">
+
+  <label>اختر البطولة أو البطولات:</label>
+  <label><input type="checkbox" value="PUBG" class="game"> PUBG</label>
+  <label><input type="checkbox" value="FC Mobile" class="game"> FC Mobile</label>
+  <label><input type="checkbox" value="eFootball" class="game"> eFootball</label>
+
+  <input type="text" id="pubg_id" placeholder="ID لعبة PUBG" class="hidden">
+  <input type="text" id="fc_uid" placeholder="UID لعبة FC Mobile" class="hidden">
+  <input type="text" id="efootball_name" placeholder="اسم لعبة eFootball" class="hidden">
+
+  <button onclick="sendData()">إرسال ✅</button>
+
+  <p id="result"></p>
+
+  <script>
+    const pubgInput = document.getElementById('pubg_id');
+    const fcInput = document.getElementById('fc_uid');
+    const efootballInput = document.getElementById('efootball_name');
+    const result = document.getElementById('result');
+
+    document.querySelectorAll('.game').forEach(chk => {
+      chk.addEventListener('change', () => {
+        pubgInput.classList.toggle('hidden', !document.querySelector('input[value="PUBG"]').checked);
+        fcInput.classList.toggle('hidden', !document.querySelector('input[value="FC Mobile"]').checked);
+        efootballInput.classList.toggle('hidden', !document.querySelector('input[value="eFootball"]').checked);
+      });
+    });
+
+    function sendData() {
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const games = [...document.querySelectorAll('.game:checked')].map(c => c.value);
+      const pubg = pubgInput.value;
+      const fc = fcInput.value;
+      const efoot = efootballInput.value;
+
+      fetch("https://script.google.com/macros/s/AKfycbxbSJLQ3mLPR7ipUfEz1HeIWMX1sqkLBQXYBWg8_wDgaiKdRcVIWlJwj3rc_ifomicP/exec", {
+        method: "POST",
+        body: JSON.stringify({ name, phone, games, pubg, fc, efoot }),
+        headers: { "Content-Type": "application/json" },
+      })
+      .then(res => res.text())
+      .then(data => result.innerText = "تم إرسال البيانات ✅")
+      .catch(err => result.innerText = "حصلت مشكلة 😢");
+    }
+  </script>
+</body>
+</html>
