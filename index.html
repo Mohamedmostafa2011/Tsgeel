@@ -96,47 +96,49 @@
     <div class="container animate__animated animate__fadeIn">
         <h1>🎮 تسجيل المشاركة في البطولات</h1>
         
-        <div class="input-group">
-            <label for="name" class="required">الاسم الكامل</label>
-            <input type="text" id="name" required placeholder="أدخل اسمك بالكامل">
-        </div>
-        
-        <div class="input-group">
-            <label for="phone" class="required">رقم الهاتف</label>
-            <input type="tel" id="phone" required placeholder="مثال: 0123456789">
-        </div>
-        
-        <div class="input-group">
-            <label class="required">اختر البطولات:</label>
-            <div class="game-option">
-                <input type="checkbox" id="pubg" name="games" value="PUBG">
-                <label for="pubg">PUBG</label>
-            </div>
-            <div id="pubg-field" class="input-group hidden">
-                <label for="pubg-id" class="required">ID (لـ PUBG)</label>
-                <input type="text" id="pubg-id" placeholder="أدخل ID الخاص بك في PUBG">
+        <form id="registrationForm">
+            <div class="input-group">
+                <label for="name" class="required">الاسم الكامل</label>
+                <input type="text" id="name" required placeholder="أدخل اسمك بالكامل">
             </div>
             
-            <div class="game-option">
-                <input type="checkbox" id="fcmobile" name="games" value="FC Mobile">
-                <label for="fcmobile">FC Mobile</label>
-            </div>
-            <div id="fcmobile-field" class="input-group hidden">
-                <label for="fcmobile-uid" class="required">UID (لـ FC Mobile)</label>
-                <input type="text" id="fcmobile-uid" placeholder="أدخل UID الخاص بك في FC Mobile">
+            <div class="input-group">
+                <label for="phone" class="required">رقم الهاتف</label>
+                <input type="tel" id="phone" required placeholder="مثال: 0123456789">
             </div>
             
-            <div class="game-option">
-                <input type="checkbox" id="efootball" name="games" value="eFootball">
-                <label for="efootball">eFootball</label>
+            <div class="input-group">
+                <label class="required">اختر البطولات:</label>
+                <div class="game-option">
+                    <input type="checkbox" id="pubg" name="games" value="PUBG">
+                    <label for="pubg">PUBG</label>
+                </div>
+                <div id="pubg-field" class="input-group hidden">
+                    <label for="pubg-id" class="required">ID (لـ PUBG)</label>
+                    <input type="text" id="pubg-id" placeholder="أدخل ID الخاص بك في PUBG">
+                </div>
+                
+                <div class="game-option">
+                    <input type="checkbox" id="fcmobile" name="games" value="FC Mobile">
+                    <label for="fcmobile">FC Mobile</label>
+                </div>
+                <div id="fcmobile-field" class="input-group hidden">
+                    <label for="fcmobile-uid" class="required">UID (لـ FC Mobile)</label>
+                    <input type="text" id="fcmobile-uid" placeholder="أدخل UID الخاص بك في FC Mobile">
+                </div>
+                
+                <div class="game-option">
+                    <input type="checkbox" id="efootball" name="games" value="eFootball">
+                    <label for="efootball">eFootball</label>
+                </div>
+                <div id="efootball-field" class="input-group hidden">
+                    <label for="efootball-name" class="required">اسم اللاعب (لـ eFootball)</label>
+                    <input type="text" id="efootball-name" placeholder="أدخل اسمك في eFootball">
+                </div>
             </div>
-            <div id="efootball-field" class="input-group hidden">
-                <label for="efootball-name" class="required">اسم اللاعب (لـ eFootball)</label>
-                <input type="text" id="efootball-name" placeholder="أدخل اسمك في eFootball">
-            </div>
-        </div>
-        
-        <button id="submit-btn" class="animate__animated animate__pulse animate__infinite">✅ إرسال التسجيل</button>
+            
+            <button type="submit" class="animate__animated animate__pulse animate__infinite">✅ إرسال التسجيل</button>
+        </form>
     </div>
 
     <!-- Firebase SDK -->
@@ -144,19 +146,21 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     
     <script>
-        // تهيئة Firebase (استبدل بالإعدادات الخاصة بك)
+        // الخطوة 1: إعداد Firebase - استبدل هذه القيم بقيم مشروعك
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            databaseURL: "YOUR_DATABASE_URL",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyDHuH4XjQTilDEB2hv9ktqKQC-8F2aX33Y",
+            authDomain: "esports-tournament-94601.firebaseapp.com",
+            databaseURL: "https://esports-tournament-94601-default-rtdb.firebaseio.com",
+            projectId: "esports-tournament-94601",
+            storageBucket: "esports-tournament-94601.appspot.com",
+            messagingSenderId: "788618275968",
+            appId: "1:788618275968:web:cfaba962f4c257fe58ca65"
         };
+        
+        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
-
-        // عرض/إخفاء الحقول حسب اختيار اللعبة
+        
+        // الخطوة 2: إظهار/إخفاء حقول الألعاب عند الاختيار
         document.getElementById('pubg').addEventListener('change', function() {
             document.getElementById('pubg-field').classList.toggle('hidden', !this.checked);
         });
@@ -169,8 +173,10 @@
             document.getElementById('efootball-field').classList.toggle('hidden', !this.checked);
         });
 
-        // إرسال البيانات
-        document.getElementById('submit-btn').addEventListener('click', function() {
+        // الخطوة 3: معالجة إرسال النموذج
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // منع إعادة تحميل الصفحة
+            
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
             
@@ -178,6 +184,7 @@
             const gamesData = {};
             let selectedGames = [];
             
+            // التحقق من PUBG
             if (document.getElementById('pubg').checked) {
                 const pubgId = document.getElementById('pubg-id').value.trim();
                 if (!pubgId) {
@@ -188,6 +195,7 @@
                 selectedGames.push("PUBG");
             }
             
+            // التحقق من FC Mobile
             if (document.getElementById('fcmobile').checked) {
                 const fcUid = document.getElementById('fcmobile-uid').value.trim();
                 if (!fcUid) {
@@ -198,6 +206,7 @@
                 selectedGames.push("FC Mobile");
             }
             
+            // التحقق من eFootball
             if (document.getElementById('efootball').checked) {
                 const efootballName = document.getElementById('efootball-name').value.trim();
                 if (!efootballName) {
@@ -219,7 +228,7 @@
                 return;
             }
             
-            // إرسال البيانات إلى Firebase
+            // الخطوة 4: إرسال البيانات إلى Firebase
             const db = firebase.database();
             db.ref('registrations').push({
                 name: name,
@@ -230,9 +239,9 @@
             })
             .then(() => {
                 alert("تم التسجيل بنجاح! شكراً لمشاركتك.");
-                document.querySelectorAll('input').forEach(input => input.value = '');
+                // مسح النموذج بعد الإرسال
+                document.getElementById('registrationForm').reset();
                 document.querySelectorAll('.hidden').forEach(el => el.classList.add('hidden'));
-                document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
             })
             .catch(error => {
                 console.error("Error:", error);
