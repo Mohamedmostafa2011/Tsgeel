@@ -141,26 +141,8 @@
         </form>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    
     <script>
-        // الخطوة 1: إعداد Firebase - استبدل هذه القيم بقيم مشروعك
-        const firebaseConfig = {
-            apiKey: "AIzaSyDHuH4XjQTilDEB2hv9ktqKQC-8F2aX33Y",
-            authDomain: "esports-tournament-94601.firebaseapp.com",
-            databaseURL: "https://esports-tournament-94601-default-rtdb.firebaseio.com",
-            projectId: "esports-tournament-94601",
-            storageBucket: "esports-tournament-94601.appspot.com",
-            messagingSenderId: "788618275968",
-            appId: "1:788618275968:web:cfaba962f4c257fe58ca65"
-        };
-        
-        // تهيئة Firebase
-        firebase.initializeApp(firebaseConfig);
-        
-        // الخطوة 2: إظهار/إخفاء حقول الألعاب عند الاختيار
+        // إظهار/إخفاء الحقول عند اختيار اللعبة
         document.getElementById('pubg').addEventListener('change', function() {
             document.getElementById('pubg-field').classList.toggle('hidden', !this.checked);
         });
@@ -173,80 +155,83 @@
             document.getElementById('efootball-field').classList.toggle('hidden', !this.checked);
         });
 
-        // الخطوة 3: معالجة إرسال النموذج
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // منع إعادة تحميل الصفحة
+        // معالجة إرسال النموذج
+        document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
             
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
+            const games = [];
+            const gameData = {};
             
-            // جمع بيانات الألعاب المختارة
-            const gamesData = {};
-            let selectedGames = [];
-            
-            // التحقق من PUBG
+            // جمع بيانات PUBG
             if (document.getElementById('pubg').checked) {
                 const pubgId = document.getElementById('pubg-id').value.trim();
                 if (!pubgId) {
                     alert("الرجاء إدخال ID الخاص بـ PUBG");
                     return;
                 }
-                gamesData.PUBG = { id: pubgId };
-                selectedGames.push("PUBG");
+                games.push("PUBG");
+                gameData.pubgId = pubgId;
             }
             
-            // التحقق من FC Mobile
+            // جمع بيانات FC Mobile
             if (document.getElementById('fcmobile').checked) {
                 const fcUid = document.getElementById('fcmobile-uid').value.trim();
                 if (!fcUid) {
                     alert("الرجاء إدخال UID الخاص بـ FC Mobile");
                     return;
                 }
-                gamesData.FC_Mobile = { uid: fcUid };
-                selectedGames.push("FC Mobile");
+                games.push("FC Mobile");
+                gameData.fcUid = fcUid;
             }
             
-            // التحقق من eFootball
+            // جمع بيانات eFootball
             if (document.getElementById('efootball').checked) {
                 const efootballName = document.getElementById('efootball-name').value.trim();
                 if (!efootballName) {
                     alert("الرجاء إدخال اسم اللاعب في eFootball");
                     return;
                 }
-                gamesData.eFootball = { playerName: efootballName };
-                selectedGames.push("eFootball");
+                games.push("eFootball");
+                gameData.efootballName = efootballName;
             }
             
-            // التحقق من البيانات الأساسية
             if (!name || !phone) {
                 alert("الرجاء إدخال الاسم ورقم الهاتف");
                 return;
             }
             
-            if (selectedGames.length === 0) {
-                alert("الرجاء اختيار بطولة واحدة على الأقل");
+            if (games.length === 0) {
+                alert("الرجاء اختيار لعبة واحدة على الأقل");
                 return;
             }
             
-            // الخطوة 4: إرسال البيانات إلى Firebase
-            const db = firebase.database();
-            db.ref('registrations').push({
-                name: name,
-                phone: phone,
-                games: selectedGames,
-                gamesData: gamesData,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            })
-            .then(() => {
-                alert("تم التسجيل بنجاح! شكراً لمشاركتك.");
-                // مسح النموذج بعد الإرسال
-                document.getElementById('registrationForm').reset();
-                document.querySelectorAll('.hidden').forEach(el => el.classList.add('hidden'));
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.");
-            });
+            // إرسال البيانات إلى Google Sheets
+            try {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbygIz3lzfeIlH85-UPRvwQTHaYPqc2pYIc3Z6w3GDUqdrS4NHKkHUN2yQwg42tAiPFU/exec', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phone,
+                        games: games,
+                        ...gameData
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.text();
+                    alert(result); // "تم التسجيل بنجاح!"
+                    document.getElementById('registrationForm').reset();
+                    document.querySelectorAll('.hidden').forEach(el => el.classList.add('hidden'));
+                } else {
+                    throw new Error('فشل في الإرسال');
+                }
+            } catch (error) {
+                console.error(error);
+                alert("حدث خطأ أثناء التسجيل: " + error.message);
+            }
         });
     </script>
 </body>
