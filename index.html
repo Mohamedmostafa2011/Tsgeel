@@ -57,41 +57,12 @@
             overflow: hidden;
         }
         
-        .header::after {
-            content: "";
-            position: absolute;
-            bottom: -50px;
-            left: -50px;
-            width: 150px;
-            height: 150px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-        
-        .header::before {
-            content: "";
-            position: absolute;
-            top: -30px;
-            right: -30px;
-            width: 100px;
-            height: 100px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-        
         .header h1 {
             font-size: 2.2rem;
             margin-bottom: 0.5rem;
             position: relative;
             z-index: 1;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1rem;
-            position: relative;
-            z-index: 1;
         }
         
         .form-container {
@@ -131,10 +102,6 @@
             outline: none;
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
             background-color: white;
-        }
-        
-        .input-group input::placeholder {
-            color: #adb5bd;
         }
         
         .game-options {
@@ -186,12 +153,6 @@
             font-size: 0.9rem;
         }
         
-        .game-option label {
-            font-weight: 500;
-            cursor: pointer;
-            flex-grow: 1;
-        }
-        
         .game-fields {
             margin-top: 1rem;
             padding-left: 2rem;
@@ -216,54 +177,11 @@
             transition: all 0.3s ease;
             margin-top: 1rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
         }
         
         .submit-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-        
-        .submit-btn::after {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                to right,
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.3) 50%,
-                rgba(255, 255, 255, 0) 100%
-            );
-            transform: rotate(30deg);
-            transition: all 0.5s ease;
-        }
-        
-        .submit-btn:hover::after {
-            left: 100%;
-        }
-        
-        .submit-btn i {
-            margin-left: 0.5rem;
-        }
-        
-        /* تأثيرات للجوائز */
-        .prize-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1000;
-            display: none;
         }
         
         @media (max-width: 768px) {
@@ -275,10 +193,6 @@
             .header h1 {
                 font-size: 1.8rem;
             }
-            
-            .form-container {
-                padding: 1.5rem;
-            }
         }
     </style>
 </head>
@@ -286,7 +200,6 @@
     <div class="container animate__animated animate__fadeIn">
         <div class="header">
             <h1><i class="fas fa-trophy"></i> تسجيل البطولات الإلكترونية</h1>
-            <p>سجل الآن واحصل على فرصة الفوز بجوائز قيمة</p>
         </div>
         
         <div class="form-container">
@@ -304,7 +217,8 @@
                 <div class="input-group">
                     <label class="required">اختر البطولات:</label>
                     <div class="game-options">
-                        <div class="game-option" onclick="document.getElementById('pubg').click()">
+                        <!-- PUBG -->
+                        <div class="game-option" onclick="toggleGame('pubg')">
                             <input type="checkbox" id="pubg" name="games" value="PUBG">
                             <label for="pubg"><i class="fas fa-gamepad"></i> PUBG</label>
                         </div>
@@ -315,7 +229,8 @@
                             </div>
                         </div>
                         
-                        <div class="game-option" onclick="document.getElementById('fcmobile').click()">
+                        <!-- FC Mobile -->
+                        <div class="game-option" onclick="toggleGame('fcmobile')">
                             <input type="checkbox" id="fcmobile" name="games" value="FC Mobile">
                             <label for="fcmobile"><i class="fas fa-futbol"></i> FC Mobile</label>
                         </div>
@@ -326,7 +241,8 @@
                             </div>
                         </div>
                         
-                        <div class="game-option" onclick="document.getElementById('efootball').click()">
+                        <!-- eFootball -->
+                        <div class="game-option" onclick="toggleGame('efootball')">
                             <input type="checkbox" id="efootball" name="games" value="eFootball">
                             <label for="efootball"><i class="fas fa-running"></i> eFootball</label>
                         </div>
@@ -339,16 +255,104 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="submit-btn animate__animated animate__pulse animate__infinite">
+                <button type="submit" class="submit-btn">
                     <i class="fas fa-paper-plane"></i> إرسال التسجيل
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- كود الجافاسكريبت يبقى كما هو في الإجابة السابقة -->
     <script>
-        // ... نفس كود الجافاسكريبت السابق ...
+        // 1. تبديل عرض حقول الألعاب
+        function toggleGame(game) {
+            const checkbox = document.getElementById(game);
+            const field = document.getElementById(`${game}-field`);
+            
+            checkbox.checked = !checkbox.checked;
+            field.classList.toggle('hidden', !checkbox.checked);
+            
+            if (checkbox.checked) {
+                const inputField = document.getElementById(`${game}-${game === 'pubg' ? 'id' : game === 'fcmobile' ? 'uid' : 'name'}`);
+                inputField.focus();
+            }
+        }
+
+        // 2. إعداد جميع التبديلات
+        document.querySelectorAll('.game-option input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const game = this.id;
+                const field = document.getElementById(`${game}-field`);
+                field.classList.toggle('hidden', !this.checked);
+            });
+        });
+
+        // 3. معالجة إرسال النموذج
+        document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // جمع البيانات
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                games: [],
+                gameDetails: {}
+            };
+
+            try {
+                // التحقق من الحقول الأساسية
+                if (!formData.name || !formData.phone) {
+                    throw new Error("الرجاء إدخال الاسم ورقم الهاتف");
+                }
+
+                // التحقق من الألعاب المختارة
+                let gameSelected = false;
+
+                // PUBG
+                if (document.getElementById('pubg').checked) {
+                    const pubgId = document.getElementById('pubg-id').value.trim();
+                    if (!pubgId) throw new Error("الرجاء إدخال ID الخاص بـ PUBG");
+                    formData.games.push("PUBG");
+                    formData.gameDetails.PUBG = pubgId;
+                    gameSelected = true;
+                }
+
+                // FC Mobile
+                if (document.getElementById('fcmobile').checked) {
+                    const fcUid = document.getElementById('fcmobile-uid').value.trim();
+                    if (!fcUid) throw new Error("الرجاء إدخال UID الخاص بـ FC Mobile");
+                    formData.games.push("FC Mobile");
+                    formData.gameDetails.FC_Mobile = fcUid;
+                    gameSelected = true;
+                }
+
+                // eFootball
+                if (document.getElementById('efootball').checked) {
+                    const efootballName = document.getElementById('efootball-name').value.trim();
+                    if (!efootballName) throw new Error("الرجاء إدخال اسم اللاعب في eFootball");
+                    formData.games.push("eFootball");
+                    formData.gameDetails.eFootball = efootballName;
+                    gameSelected = true;
+                }
+
+                if (!gameSelected) {
+                    throw new Error("الرجاء اختيار لعبة واحدة على الأقل");
+                }
+
+                // 4. عرض البيانات (بدلاً من الإرسال للسيرفر)
+                console.log("بيانات التسجيل:", formData);
+                alert(`تم التسجيل بنجاح!\nالاسم: ${formData.name}\nالهاتف: ${formData.phone}\nالألعاب: ${formData.games.join(', ')}`);
+                
+                // 5. إعادة تعيين النموذج
+                document.getElementById('registrationForm').reset();
+                document.querySelectorAll('.game-fields').forEach(field => {
+                    field.classList.add('hidden');
+                });
+
+            } catch (error) {
+                alert(error.message);
+                console.error("حدث خطأ:", error);
+            }
+        });
     </script>
 </body>
 </html>
