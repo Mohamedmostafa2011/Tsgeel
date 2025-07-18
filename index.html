@@ -338,10 +338,25 @@
                     throw new Error("الرجاء اختيار لعبة واحدة على الأقل");
                 }
 
-                // 4. عرض البيانات (بدلاً من الإرسال للسيرفر)
-                console.log("بيانات التسجيل:", formData);
-                alert(`تم التسجيل بنجاح!\nالاسم: ${formData.name}\nالهاتف: ${formData.phone}\nالألعاب: ${formData.games.join(', ')}`);
-                
+                // إرسال البيانات إلى Google Sheets
+                try {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbygIz3lzfeIlH85-UPRvwQTHaYPqc2pYIc3Z6w3GDUqdrS4NHKkHUN2yQwg42tAiPFU/exec', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+           });
+    
+    const result = await response.json();
+    if (result.success) {
+        alert("تم التسجيل بنجاح!");
+        document.getElementById('registrationForm').reset();
+        document.querySelectorAll('.game-fields').forEach(field => field.classList.add('hidden'));
+    } else {
+        throw new Error(result.message);
+    }
+} catch (error) {
+    alert("حدث خطأ أثناء التسجيل: " + error.message);
+                                                                                 }
                 // 5. إعادة تعيين النموذج
                 document.getElementById('registrationForm').reset();
                 document.querySelectorAll('.game-fields').forEach(field => {
